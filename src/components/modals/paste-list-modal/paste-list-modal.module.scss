@@ -1,0 +1,26 @@
+.modal-textarea {
+	resize: none;
+	width: 100%;
+	height: 150px;
+	margin-bottom: var(--spacing-medium);
+	padding: var(--spacing-small);
+	border: 1px solid var(--primary-color);
+	border-radius: var(--border-radius);
+	font-size: var(--font-size-base);
+
+	&:focus {
+		border-color: var(--secondary-color);
+		outline: none;
+	}
+}
+
+.modal-buttons {
+	display: flex;
+	gap: var(--spacing-medium);
+	justify-content: space-between;
+}
+
+.confirm-button,
+.cancel-button {
+	width: 100%;
+}
