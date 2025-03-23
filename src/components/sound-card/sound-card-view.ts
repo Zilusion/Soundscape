@@ -1,88 +1,91 @@
 import ElementCreator from '../../utils/element-creator';
-
+import type { SoundCardViewModel } from './sound-card-view-model';
+import classes from './sound-card-view.module.scss';
 export class SoundCardView extends ElementCreator {
-	private iconElement: HTMLImageElement | undefined;
-	private labelElement: HTMLElement | undefined;
-	private sliderElement: HTMLInputElement | undefined;
+	private viewModel: SoundCardViewModel;
+	private icon: SVGSVGElement | undefined;
+	private title: HTMLElement | undefined;
+	private slider: HTMLInputElement | undefined;
 
-	constructor() {
-		super({ tag: 'div', classes: 'sound-card' });
+	constructor(viewModel: SoundCardViewModel) {
+		super({
+			tag: 'div',
+			classes: classes.card,
+		});
+		this.viewModel = viewModel;
 
-		// 1. Иконка
-		const icon = ElementCreator.create({
-			tag: 'img',
+		// Создаём SVG-иконку через ElementCreator с указанием namespace для SVG
+		const svgIcon = ElementCreator.create({
+			tag: 'svg',
+			namespace: 'http://www.w3.org/2000/svg',
+			classes: classes.icon,
 			style: {
-				transition: 'opacity 0.2s ease',
+				opacity: String(this.viewModel.volume / 100),
 			},
 		});
 
-		if (icon instanceof HTMLImageElement) {
-			this.iconElement = icon;
-		}
-
-		// 2. Название
-		const label = ElementCreator.create({
-			tag: 'p',
-			classes: 'sound-card__label',
+		// Создаём элемент <use> внутри SVG
+		const useElement = ElementCreator.create({
+			tag: 'use',
+			namespace: 'http://www.w3.org/2000/svg',
+			attributes: {
+				'xlink:href': this.viewModel.iconPath,
+			},
 		});
 
-		if (label instanceof HTMLElement) {
-			this.labelElement = label;
+		svgIcon.append(useElement);
+		if (svgIcon instanceof SVGSVGElement) {
+			this.icon = svgIcon;
+			this.append([this.icon]);
 		}
 
-		// 3. Ползунок громкости
+		const title = ElementCreator.create({
+			tag: 'h2',
+			classes: classes.title,
+			content: this.viewModel.title,
+		});
+
+		if (title instanceof HTMLElement) {
+			this.title = title;
+			this.append(this.title);
+		}
+
 		const slider = ElementCreator.create({
 			tag: 'input',
 			attributes: {
 				type: 'range',
 				min: '0',
-				max: '1',
-				step: '0.01',
+				max: '100',
+				value: '0',
 			},
-			classes: 'sound-card__slider',
+			classes: classes.slider,
+			on: {
+				input: (event: Event): void => {
+					if (event.target instanceof HTMLInputElement) {
+						this.viewModel.volume = Number(event.target.value);
+					}
+				},
+			},
 		});
 
 		if (slider instanceof HTMLInputElement) {
-			this.sliderElement = slider;
+			this.slider = slider;
+			this.append(this.slider);
+			this.slider.value = String(this.viewModel.volume);
 		}
 
-		if (this.iconElement && this.labelElement && this.sliderElement) {
-			this.append([
-				this.iconElement,
-				this.labelElement,
-				this.sliderElement,
-			]);
-		}
-	}
-
-	public setIconUrl(url: string, altText?: string): void {
-		if (!this.iconElement) return;
-		this.iconElement.src = url;
-		if (altText) {
-			this.iconElement.alt = altText;
-		}
-	}
-
-	public setLabel(text: string): void {
-		if (!this.labelElement) return;
-		this.labelElement.textContent = text;
-	}
-
-	public setVolume(volume: number): void {
-		if (!this.sliderElement || !this.iconElement) return;
-		this.sliderElement.value = volume.toString();
-		this.iconElement.style.opacity = volume.toString();
-	}
-
-	public onVolumeChange(callback: (volume: number) => void): void {
-		if (!this.sliderElement) return;
-		this.sliderElement.addEventListener('input', (event) => {
-			const volume = Number.parseFloat(
-				event.target instanceof HTMLInputElement
-					? event.target.value
-					: '0',
-			);
-			callback(volume);
+		this.viewModel.onVolumeChange((volume) => {
+			if (this.slider) {
+				this.slider.value = String(volume);
+			}
+			if (this.icon) {
+				this.icon.style.opacity = String(volume / 100);
+			}
+			this.viewModel.playSound();
 		});
+	}
+
+	public render(): Element {
+		return this.getElement();
 	}
 }

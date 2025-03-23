@@ -3,7 +3,7 @@ import ElementCreator from '../../utils/element-creator';
 import classes from './not-found-view.module.scss';
 
 export class NotFoundView extends BaseView {
-	public render(): HTMLElement {
+	public render(): Element {
 		this.container = new ElementCreator({
 			tag: 'section',
 			classes: ['container', classes['not-found-container']],

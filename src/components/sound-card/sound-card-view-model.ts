@@ -1,21 +1,48 @@
 import type { SoundCardModel } from './sound-card-model';
-import type { SoundCardView } from './sound-card-view';
-
 export class SoundCardViewModel {
 	private model: SoundCardModel;
-	private view: SoundCardView;
 
-	constructor(model: SoundCardModel, view: SoundCardView) {
+	constructor(model: SoundCardModel) {
 		this.model = model;
-		this.view = view;
+	}
 
-		this.view.setIconUrl(this.model.iconUrl, this.model.label);
-		this.view.setLabel(this.model.label);
-		this.view.setVolume(this.model.volume);
+	public get id(): string {
+		return this.model.id;
+	}
 
-		this.view.onVolumeChange((newVolume: number) => {
-			this.model.volume = newVolume;
-			this.view.setVolume(newVolume);
-		});
+	public get title(): string {
+		return this.model.title;
+	}
+
+	public get iconPath(): string {
+		return this.model.iconPath;
+	}
+
+	public get soundPath(): string {
+		return this.model.soundPath;
+	}
+
+	public get volume(): number {
+		return this.model.volume;
+	}
+
+	public set volume(value: number) {
+		this.model.volume = value;
+	}
+
+	public onVolumeChange(callback: (volume: number) => void): void {
+		this.model.onVolumeChange(callback);
+	}
+
+	public playSound(): void {
+		this.model.player.play(this.volume);
+	}
+
+	public pauseSound(): void {
+		this.model.player.pause();
+	}
+
+	public resumeSound(): void {
+		this.model.player.resume(this.volume);
 	}
 }

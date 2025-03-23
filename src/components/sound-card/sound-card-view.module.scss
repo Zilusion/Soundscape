@@ -1,0 +1,21 @@
+.card {
+	min-width: 200px;
+	max-width: 250px;
+	min-height: 200px;
+	background-color: transparent;
+	border: 1px solid lightblue;
+	border-radius: 10px;
+	display: grid;
+	place-items: center;
+	grid-template-rows: auto 1fr 1fr;
+}
+
+.icon {
+	width: 90px;
+	height: 90px;
+	align-self: center;
+}
+
+.slider {
+	width: 100px;
+}

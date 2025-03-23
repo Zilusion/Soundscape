@@ -1,26 +1,25 @@
 import ElementCreator from '../utils/element-creator';
-import type { State } from '../state/state';
-import type EventBus from '../state/event-bus';
-import type { OptionsViewModel } from './options-view/options-view-model';
-import type { DecisionPickerViewModel } from './decision-picker-view/decision-picker-view-model';
+// import type { State } from '../global/state';
+import type EventBus from '../global/event-bus';
 
 export type ViewDependencies = {
-	state: State;
+	// state: State;
 	eventBus: EventBus;
-	viewModel?: OptionsViewModel | DecisionPickerViewModel;
+	// viewModel?: SoundCardViewModel;
 };
 
 export abstract class BaseView {
 	protected container: ElementCreator;
-	protected dependencies: ViewDependencies;
+	// protected dependencies: ViewDependencies;
 
-	constructor(dependencies: ViewDependencies) {
-		this.dependencies = dependencies;
+	constructor() {
+		// constructor(dependencies: ViewDependencies) {
+		// this.dependencies = dependencies;
 		this.container = new ElementCreator({
 			tag: 'div',
 		});
 	}
 
-	public abstract render(): HTMLElement;
+	public abstract render(): Element;
 	public unmount?(): void;
 }
