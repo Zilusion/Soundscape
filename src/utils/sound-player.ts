@@ -1,4 +1,4 @@
-import { GlobalSettings } from "../global/global-settings";
+import { GlobalSettings } from '../global/global-settings';
 
 export class SoundPlayer {
 	private audio: HTMLAudioElement;
@@ -15,7 +15,6 @@ export class SoundPlayer {
 		const mute = globalSettings.mute;
 		return mute ? 0 : (instanceVolume * globalVolume) / 10000;
 	}
-	
 
 	public play(volume: number): void {
 		this.audio.currentTime = 0;

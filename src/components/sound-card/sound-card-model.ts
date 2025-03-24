@@ -3,8 +3,6 @@ import { SoundPlayer } from '../../utils/sound-player';
 import { GlobalSettings } from '../../global/global-settings';
 
 export class SoundCardModel {
-	private static registry: Set<string> = new Set();
-
 	public readonly id: string;
 	public readonly title: string;
 	public readonly iconPath: string;
@@ -17,21 +15,28 @@ export class SoundCardModel {
 		title: string,
 		iconPath: string,
 		soundPath: string,
-		volume: number,
+		defaultVolume: number,
 	) {
-		if (SoundCardModel.registry.has(id)) {
-			throw new Error(`Sound card with id ${id} already exists`);
-		}
 		this.id = id;
-		SoundCardModel.registry.add(id);
 		this.title = title;
 		this.iconPath = iconPath;
 		this.soundPath = soundPath;
-		this._volume = new ReactiveProperty<number>(volume);
-		this.loadVolume();
-		this._player = new SoundPlayer(this.soundPath);
+		
 		const globalSettings = GlobalSettings.getInstance();
-		globalSettings.onVolumeChange(() => this._player.setVolume(this.volume));
+		const savedVolume = globalSettings.getCardVolume(this.id);
+		this._volume = new ReactiveProperty<number>(
+			savedVolume !== undefined ? savedVolume : defaultVolume);
+		globalSettings.setCardVolume(this.id, this.volume);
+		this._player = new SoundPlayer(this.soundPath);
+
+		this._volume.subscribe((volume) => {
+			this._player.setVolume(volume);
+			globalSettings.setCardVolume(this.id, volume);
+		});
+
+		globalSettings.onVolumeChange(() =>
+			this._player.setVolume(this.volume),
+		);
 		globalSettings.onMuteChange(() => this._player.setVolume(this.volume));
 		this._player.setVolume(this.volume);
 	}
@@ -46,77 +51,9 @@ export class SoundCardModel {
 
 	public set volume(value: number) {
 		this._volume.value = value;
-		this.saveVolume();
-		this._player.setVolume(value);
 	}
 
 	public onVolumeChange(callback: (volume: number) => void): void {
 		this._volume.subscribe(callback);
 	}
-
-	private loadVolume(): void {
-		const savedData = localStorage.getItem('soundCards');
-		if (savedData) {
-			try {
-				const parsed = safeJSONParse(savedData);
-				if (isVolumeRecord(parsed)) {
-					if (parsed[this.id] !== undefined) {
-						this._volume.value = Number(parsed[this.id]);
-					}
-				} else {
-					console.error(
-						'SoundCards data is not a valid volume record',
-					);
-				}
-			} catch (error) {
-				console.error('Error parsing soundCards data:', error);
-			}
-		}
-	}
-
-	private saveVolume(): void {
-		const savedData = localStorage.getItem('soundCards');
-		let volumes: Record<string, number> = {};
-		if (savedData) {
-			try {
-				const parsed = safeJSONParse(savedData);
-				if (isVolumeRecord(parsed)) {
-					volumes = parsed;
-				} else {
-					console.error(
-						'SoundCards data is not a valid volume record',
-					);
-				}
-			} catch (error) {
-				console.error('Error parsing soundCards data:', error);
-			}
-		}
-		volumes[this.id] = this._volume.value;
-		localStorage.setItem('soundCards', JSON.stringify(volumes));
-	}
-
-	// private loadVolume(): void {
-	// 	const savedValue = localStorage.getItem(`soundCard_volume_${this.id}`);
-	// 	if (savedValue !== null) {
-	// 		this._volume.value = Number(savedValue);
-	// 	}
-	// }
-
-	// private saveVolume(): void {
-	// 	localStorage.setItem(
-	// 		`soundCard_volume_${this.id}`,
-	// 		this._volume.value.toString(),
-	// 	);
-	// }
-}
-
-function safeJSONParse(json: string): unknown {
-	return JSON.parse(json);
-}
-
-function isVolumeRecord(data: unknown): data is Record<string, number> {
-	if (typeof data !== 'object' || data === null || Array.isArray(data)) {
-		return false;
-	}
-	return Object.values(data).every((value) => typeof value === 'number');
 }
