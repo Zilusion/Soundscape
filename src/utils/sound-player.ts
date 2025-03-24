@@ -6,14 +6,7 @@ export class SoundPlayer {
 	constructor(source: string) {
 		this.audio = new Audio(source);
 		this.audio.preload = 'auto';
-		this.audio.loop = false;
-	}
-
-	private getEffectiveVolume(instanceVolume: number): number {
-		const globalSettings = GlobalSettings.getInstance();
-		const globalVolume = globalSettings.volume;
-		const mute = globalSettings.mute;
-		return mute ? 0 : (instanceVolume * globalVolume) / 10000;
+		this.audio.loop = true;
 	}
 
 	public play(volume: number): void {
@@ -37,5 +30,12 @@ export class SoundPlayer {
 
 	public setVolume(instanceVolume: number): void {
 		this.audio.volume = this.getEffectiveVolume(instanceVolume);
+	}
+
+	private getEffectiveVolume(instanceVolume: number): number {
+		const globalSettings = GlobalSettings.getInstance();
+		const globalVolume = globalSettings.volume;
+		const mute = globalSettings.mute;
+		return mute ? 0 : (instanceVolume * globalVolume) / 10000;
 	}
 }

@@ -21,11 +21,12 @@ export class SoundCardModel {
 		this.title = title;
 		this.iconPath = iconPath;
 		this.soundPath = soundPath;
-		
+
 		const globalSettings = GlobalSettings.getInstance();
 		const savedVolume = globalSettings.getCardVolume(this.id);
 		this._volume = new ReactiveProperty<number>(
-			savedVolume !== undefined ? savedVolume : defaultVolume);
+			savedVolume === undefined ? defaultVolume : savedVolume,
+		);
 		globalSettings.setCardVolume(this.id, this.volume);
 		this._player = new SoundPlayer(this.soundPath);
 

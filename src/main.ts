@@ -88,22 +88,22 @@ const soundCardData = [
 		id: 'wind',
 		title: 'Ветер',
 		iconPath: '#icon-wind',
-		soundPath: './src/assets/sounds/light-breeze.mp3',
-		volume: 50,
+		soundPath: '/assets/sounds/light-breeze.mp3',
+		volume: 0,
 	},
 	{
 		id: 'rain',
 		title: 'Дождь',
 		iconPath: '#icon-rain',
-		soundPath: './src/assets/sounds/rain.mp3',
-		volume: 60,
+		soundPath: '/assets/sounds/rain.mp3',
+		volume: 0,
 	},
 	{
 		id: 'thunder',
 		title: 'Гроза',
 		iconPath: '#icon-thunder',
-		soundPath: './src/assets/sounds/thunder.mp3',
-		volume: 70,
+		soundPath: '/assets/sounds/thunder.mp3',
+		volume: 0,
 	},
 ];
 
@@ -115,6 +115,8 @@ document.body.append(container);
 
 const globalSettings = GlobalSettings.getInstance();
 
+const soundCardViewModels: SoundCardViewModel[] = [];
+
 const globalVolumeSlider = ElementCreator.create({
 	tag: 'input',
 	attributes: {
@@ -125,7 +127,6 @@ const globalVolumeSlider = ElementCreator.create({
 	},
 });
 
-// TODO Сделать чтобы глобальное состояние звука сразу обновляло частные звуки
 globalVolumeSlider.addEventListener('input', (event: Event) => {
 	if (event.target instanceof HTMLInputElement) {
 		globalSettings.volume = Number(event.target.value);
@@ -144,8 +145,62 @@ const muteButton = ElementCreator.create({
 muteButton.addEventListener('click', () => {
 	globalSettings.mute = !globalSettings.mute;
 	muteButton.textContent = globalSettings.mute ? 'Sound off' : 'Sound on';
+	if (globalVolumeSlider instanceof HTMLInputElement) {
+		globalVolumeSlider.value = '0';
+		globalVolumeSlider.value = globalSettings.mute
+			? '0'
+			: `${globalSettings.volume}`;
+	}
 });
 container.append(muteButton);
+
+const playPauseButton = ElementCreator.create({
+	tag: 'button',
+	classes: ['play-pause-button'],
+	attributes: { type: 'button' },
+	content: globalSettings.paused ? 'Play All' : 'Pause All',
+});
+playPauseButton.addEventListener('click', () => {
+	// Переключаем состояние paused
+	globalSettings.paused = !globalSettings.paused;
+	playPauseButton.textContent = globalSettings.paused
+		? 'Play All'
+		: 'Pause All';
+	// Для каждого viewModel вызываем pause или resume в зависимости от состояния
+	soundCardViewModels.forEach((vm) => {
+		if (globalSettings.paused) {
+			vm.pauseSound();
+		} else {
+			vm.resumeSound();
+		}
+	});
+});
+container.append(playPauseButton);
+
+// Кнопка для сброса настроек (reset)
+const resetButton = ElementCreator.create({
+	tag: 'button',
+	classes: ['reset-button'],
+	attributes: { type: 'button' },
+	content: 'Reset Settings',
+});
+resetButton.addEventListener('click', () => {
+	globalSettings.reset();
+	// Обновляем глобальные элементы управления
+	if (globalVolumeSlider instanceof HTMLInputElement) {
+		globalVolumeSlider.value = `${globalSettings.volume}`;
+	}
+	muteButton.textContent = globalSettings.mute ? 'Sound off' : 'Sound on';
+	playPauseButton.textContent = globalSettings.paused
+		? 'Play All'
+		: 'Pause All';
+	// Также обновляем каждую карточку, чтобы они получили новые значения
+	soundCardViewModels.forEach((vm) => {
+		vm.volume = globalSettings.getCardVolume(vm.id) || 0; // или другой дефолт
+		vm.pauseSound(); // останавливаем звук
+	});
+});
+container.append(resetButton);
 
 soundCardData.forEach((data) => {
 	try {
@@ -157,6 +212,7 @@ soundCardData.forEach((data) => {
 			data.volume,
 		);
 		const viewModel = new SoundCardViewModel(model);
+		soundCardViewModels.push(viewModel);
 		const view = new SoundCardView(viewModel);
 		container.append(view.render());
 	} catch (error) {

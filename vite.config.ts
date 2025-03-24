@@ -3,7 +3,7 @@ import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
 import path from 'node:path';
 
 export default {
-	base: './',
+	base: '/',
 	plugins: [
 		Inspect(),
 		createSvgIconsPlugin({

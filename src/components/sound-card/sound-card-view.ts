@@ -71,18 +71,13 @@ export class SoundCardView extends ElementCreator {
 			this.slider.value = String(this.viewModel.volume);
 		}
 
-		const updateUI = () => {
+		this.viewModel.onVolumeChange(() => {
 			if (this.slider) {
 				this.slider.value = String(this.viewModel.volume);
 			}
 			if (this.icon) {
 				this.icon.style.opacity = String(this.viewModel.volume / 100);
 			}
-		};
-
-		this.viewModel.onVolumeChange(() => {
-			updateUI();
-			this.viewModel.playSound();
 		});
 	}
 
