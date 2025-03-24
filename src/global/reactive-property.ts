@@ -8,12 +8,10 @@ export class ReactiveProperty<T> {
 		this._value = initialValue;
 	}
 
-	// Геттер – позволяет обращаться как к обычному свойству
 	public get value(): T {
 		return this._value;
 	}
 
-	// Сеттер – позволяет присваивать значение через свойство
 	public set value(newValue: T) {
 		if (newValue !== this._value) {
 			this._value = newValue;

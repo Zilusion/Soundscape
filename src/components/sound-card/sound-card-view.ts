@@ -1,6 +1,7 @@
 import ElementCreator from '../../utils/element-creator';
 import type { SoundCardViewModel } from './sound-card-view-model';
 import classes from './sound-card-view.module.scss';
+
 export class SoundCardView extends ElementCreator {
 	private viewModel: SoundCardViewModel;
 	private icon: SVGSVGElement | undefined;
@@ -14,17 +15,12 @@ export class SoundCardView extends ElementCreator {
 		});
 		this.viewModel = viewModel;
 
-		// Создаём SVG-иконку через ElementCreator с указанием namespace для SVG
 		const svgIcon = ElementCreator.create({
 			tag: 'svg',
 			namespace: 'http://www.w3.org/2000/svg',
 			classes: classes.icon,
-			style: {
-				opacity: String(this.viewModel.volume / 100),
-			},
 		});
 
-		// Создаём элемент <use> внутри SVG
 		const useElement = ElementCreator.create({
 			tag: 'use',
 			namespace: 'http://www.w3.org/2000/svg',
@@ -36,6 +32,7 @@ export class SoundCardView extends ElementCreator {
 		svgIcon.append(useElement);
 		if (svgIcon instanceof SVGSVGElement) {
 			this.icon = svgIcon;
+			this.icon.style.opacity = `${this.viewModel.volume / 100}`;
 			this.append([this.icon]);
 		}
 
@@ -74,13 +71,17 @@ export class SoundCardView extends ElementCreator {
 			this.slider.value = String(this.viewModel.volume);
 		}
 
-		this.viewModel.onVolumeChange((volume) => {
+		const updateUI = () => {
 			if (this.slider) {
-				this.slider.value = String(volume);
+				this.slider.value = String(this.viewModel.volume);
 			}
 			if (this.icon) {
-				this.icon.style.opacity = String(volume / 100);
+				this.icon.style.opacity = String(this.viewModel.volume / 100);
 			}
+		};
+
+		this.viewModel.onVolumeChange(() => {
+			updateUI();
 			this.viewModel.playSound();
 		});
 	}

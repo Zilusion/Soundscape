@@ -77,10 +77,10 @@
 // soundCardModel._volume.value = 15;
 // console.log(soundCardModel._volume.value);
 import ElementCreator from './utils/element-creator';
+import { GlobalSettings } from './global/global-settings';
 import { SoundCardModel } from './components/sound-card/sound-card-model';
 import { SoundCardViewModel } from './components/sound-card/sound-card-view-model';
 import { SoundCardView } from './components/sound-card/sound-card-view';
-import { SoundPlayer } from './utils/sound-player';
 import 'virtual:svg-icons-register';
 
 const soundCardData = [
@@ -113,6 +113,40 @@ const container = ElementCreator.create({
 });
 document.body.append(container);
 
+const globalSettings = GlobalSettings.getInstance();
+
+const globalVolumeSlider = ElementCreator.create({
+	tag: 'input',
+	attributes: {
+		type: 'range',
+		min: '0',
+		max: '100',
+		value: `${globalSettings.volume}`,
+	},
+});
+
+// TODO Сделать чтобы глобальное состояние звука сразу обновляло частные звуки
+globalVolumeSlider.addEventListener('input', (event: Event) => {
+	if (event.target instanceof HTMLInputElement) {
+		globalSettings.volume = Number(event.target.value);
+	}
+});
+container.append(globalVolumeSlider);
+
+const muteButton = ElementCreator.create({
+	tag: 'button',
+	classes: ['mute-button'],
+	attributes: {
+		type: 'button',
+	},
+	content: globalSettings.mute ? 'Sound off' : 'Sound on',
+});
+muteButton.addEventListener('click', () => {
+	globalSettings.mute = !globalSettings.mute;
+	muteButton.textContent = globalSettings.mute ? 'Sound off' : 'Sound on';
+});
+container.append(muteButton);
+
 soundCardData.forEach((data) => {
 	try {
 		const model = new SoundCardModel(
@@ -129,22 +163,3 @@ soundCardData.forEach((data) => {
 		console.error(error);
 	}
 });
-
-const globalVolumeSlider = ElementCreator.create({
-	tag: 'input',
-	attributes: {
-		type: 'range',
-		min: '0',
-		max: '100',
-		value: '100',
-	},
-});
-
-// TODO Сделать чтобы глобальное состояние звука сразу обновляло частные звуки
-globalVolumeSlider.addEventListener('input', (event: Event) => {
-	if (event.target instanceof HTMLInputElement) {
-		const globalVol = Number(event.target.value);
-		SoundPlayer.setGlobalVolume(globalVol);
-	}
-});
-container.append(globalVolumeSlider);

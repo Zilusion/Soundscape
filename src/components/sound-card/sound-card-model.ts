@@ -1,5 +1,6 @@
 import { ReactiveProperty } from '../../global/reactive-property';
 import { SoundPlayer } from '../../utils/sound-player';
+import { GlobalSettings } from '../../global/global-settings';
 
 export class SoundCardModel {
 	private static registry: Set<string> = new Set();
@@ -19,7 +20,7 @@ export class SoundCardModel {
 		volume: number,
 	) {
 		if (SoundCardModel.registry.has(id)) {
-			throw new Error(`SoundCard with id ${id} already exists`);
+			throw new Error(`Sound card with id ${id} already exists`);
 		}
 		this.id = id;
 		SoundCardModel.registry.add(id);
@@ -29,6 +30,10 @@ export class SoundCardModel {
 		this._volume = new ReactiveProperty<number>(volume);
 		this.loadVolume();
 		this._player = new SoundPlayer(this.soundPath);
+		const globalSettings = GlobalSettings.getInstance();
+		globalSettings.onVolumeChange(() => this._player.setVolume(this.volume));
+		globalSettings.onMuteChange(() => this._player.setVolume(this.volume));
+		this._player.setVolume(this.volume);
 	}
 
 	public get volume(): number {
@@ -49,7 +54,6 @@ export class SoundCardModel {
 		this._volume.subscribe(callback);
 	}
 
-	// Загружаем общий объект с громкостями из localStorage
 	private loadVolume(): void {
 		const savedData = localStorage.getItem('soundCards');
 		if (savedData) {
@@ -70,7 +74,6 @@ export class SoundCardModel {
 		}
 	}
 
-	// Сохраняем общий объект с громкостями в localStorage
 	private saveVolume(): void {
 		const savedData = localStorage.getItem('soundCards');
 		let volumes: Record<string, number> = {};
