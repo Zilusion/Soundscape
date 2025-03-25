@@ -82,6 +82,7 @@ import { SoundCardModel } from './components/sound-card/sound-card-model';
 import { SoundCardViewModel } from './components/sound-card/sound-card-view-model';
 import { SoundCardView } from './components/sound-card/sound-card-view';
 import 'virtual:svg-icons-register';
+// import { saveToFile, loadFromFile } from './utils/file-utilities';
 
 const soundCardData = [
 	{
@@ -115,8 +116,6 @@ document.body.append(container);
 
 const globalSettings = GlobalSettings.getInstance();
 
-const soundCardViewModels: SoundCardViewModel[] = [];
-
 const globalVolumeSlider = ElementCreator.create({
 	tag: 'input',
 	attributes: {
@@ -134,22 +133,31 @@ globalVolumeSlider.addEventListener('input', (event: Event) => {
 });
 container.append(globalVolumeSlider);
 
+globalSettings.onVolumeChange(() => {
+	if (globalVolumeSlider instanceof HTMLInputElement) {
+		globalVolumeSlider.value = `${globalSettings.volume}`;
+	}
+});
+
 const muteButton = ElementCreator.create({
 	tag: 'button',
 	classes: ['mute-button'],
 	attributes: {
 		type: 'button',
 	},
-	content: globalSettings.mute ? 'Sound off' : 'Sound on',
+	content: globalSettings.volume === 0 ? 'Unmute' : 'Mute',
 });
+
+globalSettings.onVolumeChange(() => {
+	muteButton.textContent = globalSettings.volume === 0 ? 'Unmute' : 'Mute';
+});
+
 muteButton.addEventListener('click', () => {
-	globalSettings.mute = !globalSettings.mute;
-	muteButton.textContent = globalSettings.mute ? 'Sound off' : 'Sound on';
-	if (globalVolumeSlider instanceof HTMLInputElement) {
-		globalVolumeSlider.value = '0';
-		globalVolumeSlider.value = globalSettings.mute
-			? '0'
-			: `${globalSettings.volume}`;
+	if (globalSettings.volume === 0) {
+		globalSettings.volume = globalSettings.previousVolume;
+	} else {
+		globalSettings.previousVolume = globalSettings.volume;
+		globalSettings.volume = 0;
 	}
 });
 container.append(muteButton);
@@ -160,47 +168,40 @@ const playPauseButton = ElementCreator.create({
 	attributes: { type: 'button' },
 	content: globalSettings.paused ? 'Play All' : 'Pause All',
 });
+
 playPauseButton.addEventListener('click', () => {
-	// Переключаем состояние paused
 	globalSettings.paused = !globalSettings.paused;
-	playPauseButton.textContent = globalSettings.paused
-		? 'Play All'
-		: 'Pause All';
-	// Для каждого viewModel вызываем pause или resume в зависимости от состояния
-	soundCardViewModels.forEach((vm) => {
-		if (globalSettings.paused) {
-			vm.pauseSound();
-		} else {
-			vm.resumeSound();
-		}
-	});
+});
+
+globalSettings.onPausedChange((paused) => {
+	playPauseButton.textContent = paused ? 'Play All' : 'Pause All';
 });
 container.append(playPauseButton);
 
-// Кнопка для сброса настроек (reset)
 const resetButton = ElementCreator.create({
 	tag: 'button',
 	classes: ['reset-button'],
 	attributes: { type: 'button' },
 	content: 'Reset Settings',
 });
+
 resetButton.addEventListener('click', () => {
 	globalSettings.reset();
-	// Обновляем глобальные элементы управления
-	if (globalVolumeSlider instanceof HTMLInputElement) {
-		globalVolumeSlider.value = `${globalSettings.volume}`;
-	}
-	muteButton.textContent = globalSettings.mute ? 'Sound off' : 'Sound on';
-	playPauseButton.textContent = globalSettings.paused
-		? 'Play All'
-		: 'Pause All';
-	// Также обновляем каждую карточку, чтобы они получили новые значения
-	soundCardViewModels.forEach((vm) => {
-		vm.volume = globalSettings.getCardVolume(vm.id) || 0; // или другой дефолт
-		vm.pauseSound(); // останавливаем звук
-	});
 });
 container.append(resetButton);
+
+// const saveToFileButton = ElementCreator.create({
+// 	tag: 'button',
+// 	classes: ['save-to-file-button'],
+// 	attributes: { type: 'button' },
+// 	content: 'Save settings to file',
+// 	on: {
+// 		click: (): void => {
+// 			saveToFile(globalSettings, 'settings');
+// 		},
+// 	},
+// });
+// container.append(saveToFileButton);
 
 soundCardData.forEach((data) => {
 	try {
@@ -212,7 +213,6 @@ soundCardData.forEach((data) => {
 			data.volume,
 		);
 		const viewModel = new SoundCardViewModel(model);
-		soundCardViewModels.push(viewModel);
 		const view = new SoundCardView(viewModel);
 		container.append(view.render());
 	} catch (error) {

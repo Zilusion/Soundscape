@@ -35,7 +35,6 @@ export class SoundPlayer {
 	private getEffectiveVolume(instanceVolume: number): number {
 		const globalSettings = GlobalSettings.getInstance();
 		const globalVolume = globalSettings.volume;
-		const mute = globalSettings.mute;
-		return mute ? 0 : (instanceVolume * globalVolume) / 10000;
+		return (instanceVolume * globalVolume) / 10000;
 	}
 }

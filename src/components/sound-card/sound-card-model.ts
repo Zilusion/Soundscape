@@ -38,7 +38,19 @@ export class SoundCardModel {
 		globalSettings.onVolumeChange(() =>
 			this._player.setVolume(this.volume),
 		);
-		globalSettings.onMuteChange(() => this._player.setVolume(this.volume));
+
+		globalSettings.onPausedChange((paused) => {
+			if (paused) {
+				this._player.pause();
+			} else {
+				this._player.resume(this.volume);
+			}
+		});
+
+		globalSettings.onCardsChange((cards) => {
+			console.log(cards);
+			this.volume = globalSettings.getCardVolume(this.id) || 0;
+		});
 		this._player.setVolume(this.volume);
 	}
 

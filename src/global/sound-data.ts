@@ -1,11 +1,9 @@
-// src/global/sound-data.ts
-
 export type Sound = {
-	id: string; // Уникальный идентификатор звука
-	label: string; // Отображаемое название
-	iconUrl: string; // URL иконки
-	audioUrl: string; // URL звукового файла (или можно сделать массив, если нужно несколько файлов)
-	volume: number; // Громкость по умолчанию (например, 0.5)
+	id: string;
+	label: string;
+	iconUrl: string;
+	audioUrl: string;
+	volume: number;
 };
 
 export const defaultSounds: Sound[] = [
