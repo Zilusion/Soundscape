@@ -1,6 +1,6 @@
 import ElementCreator from '../../utils/element-creator';
 import type { SoundCardViewModel } from './sound-card-view-model';
-import classes from './sound-card-view.module.scss';
+import classes from './_sound-card-view.module.scss';
 
 export class SoundCardView extends ElementCreator {
 	private viewModel: SoundCardViewModel;
