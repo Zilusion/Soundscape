@@ -1,0 +1,95 @@
+// @use "../base/variables" as variables;
+@use './_mixins' as mixins;
+
+/* Containers */
+.page {
+}
+
+.container {
+	width: 100%;
+	max-width: var(--container-width);
+	margin: 0 auto;
+	padding: 0 var(--container-padding);
+}
+
+.container-wide {
+	max-width: 100%;
+	padding: 0 var(--container-padding);
+}
+
+.container-full {
+	max-width: 100%;
+}
+
+.container-left-50 {
+	max-width: 50%;
+	padding: 0 var(--container-padding);
+
+	@include mixins.media-sm {
+		max-width: 100%;
+	}
+}
+
+.container-right-50 {
+	max-width: 50%;
+	margin-left: auto;
+	padding: 0 var(--container-padding);
+
+	@include mixins.media-sm {
+		max-width: 100%;
+	}
+}
+
+.container-right {
+	padding-left: calc(
+		(100% - var(--container-width)) / 2 + var(--container-padding)
+	);
+
+	@include mixins.media-md {
+		padding-left: var(--container-padding);
+	}
+}
+
+.container-left {
+	padding-right: calc(
+		(100% - var(--container-width)) / 2 + var(--container-padding)
+	);
+
+	@include mixins.media-md {
+		padding-right: var(--container-padding);
+	}
+}
+
+.container-half-left {
+	padding-right: calc(
+		(100% - var(--container-width)) / 2 + var(--container-width) / 2
+	);
+	padding-left: calc(
+		(100% - var(--container-width)) / 2 + var(--container-padding)
+	);
+
+	@include mixins.media-md {
+		padding-left: var(--container-padding);
+	}
+
+	@include mixins.media-sm {
+		padding: 0 var(--container-padding);
+	}
+}
+
+.container-half-right {
+	padding-right: calc(
+		(100% - var(--container-width)) / 2 + var(--container-padding)
+	);
+	padding-left: calc(
+		(100% - var(--container-width)) / 2 + var(--container-width) / 2
+	);
+
+	@include mixins.media-md {
+		padding-right: var(--container-padding);
+	}
+
+	@include mixins.media-sm {
+		padding: 0 var(--container-padding);
+	}
+}

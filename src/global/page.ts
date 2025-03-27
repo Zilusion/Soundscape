@@ -4,9 +4,7 @@ export default class Page extends ElementCreator {
 	protected container: Element;
 
 	constructor(sectionClass: string, containerClass: string) {
-		// Создаем <section class="sectionClass">
 		super({ tag: 'section', classes: [sectionClass] });
-		// Внутри section создаем <div class="containerClass">
 		this.container = ElementCreator.create({
 			tag: 'div',
 			classes: [containerClass],

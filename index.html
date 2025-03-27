@@ -5,8 +5,19 @@
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<title>Soundscape</title>
+		<style>
+			#canvas {
+				width: 100vw;
+				height: 100vh;
+				position: fixed;
+				pointer-events: none;
+				/* z-index: -1; */
+				/* background-color: blueviolet; */
+			}
+		</style>
 	</head>
 	<body>
+		<canvas id="canvas" width="1000" height="1000"></canvas>
 		<script type="module" src="/src/main.ts"></script>
 	</body>
 </html>

@@ -220,6 +220,104 @@
 // });
 // container.append(saveToFileButton);
 
-import SoundCardsPage from './components/sound-cards-page/sound-cards-page';
-const soundCardsPage = new SoundCardsPage();
-document.body.append(soundCardsPage.getElement());
+// import SoundCardsPage from './components/sound-cards-page/sound-cards-page';
+// const soundCardsPage = new SoundCardsPage();
+// document.body.append(soundCardsPage.getElement());
+
+import { SoundCardsPageModel } from './components/sound-cards-page/sound-cards-page-model';
+import { SoundCardsPageViewModel } from './components/sound-cards-page/sound-cards-page-view-model';
+import { SoundCardsPageView } from './components/sound-cards-page/sound-cards-page-view';
+
+const soundCardData = [
+	{
+		id: 'wind',
+		title: 'Ветер',
+		iconPath: '#icon-wind',
+		soundPath: '/assets/sounds/light-breeze.mp3',
+		volume: 0,
+	},
+	{
+		id: 'rain',
+		title: 'Дождь',
+		iconPath: '#icon-rain',
+		soundPath: '/assets/sounds/rain.mp3',
+		volume: 0,
+	},
+	{
+		id: 'thunder',
+		title: 'Гроза',
+		iconPath: '#icon-thunder',
+		soundPath: '/assets/sounds/thunder.mp3',
+		volume: 0,
+	},
+];
+
+const pageModel = new SoundCardsPageModel(soundCardData);
+const pageViewModel = new SoundCardsPageViewModel(pageModel);
+const pageView = new SoundCardsPageView(pageViewModel);
+
+document.body.append(pageView.getElement());
+
+const canvasElement = document.querySelector('#canvas');
+let canvas: HTMLCanvasElement | null = null;
+if (canvasElement instanceof HTMLCanvasElement) {
+	canvas = canvasElement;
+} else {
+	throw new TypeError('Canvas element is not found');
+}
+const context = canvas.getContext('2d');
+
+if (canvas && context) {
+	canvas.width = window.innerWidth;
+	canvas.height = window.innerHeight;
+
+	const bubbles: {
+		x: number;
+		y: number;
+		radius: number;
+		speed: number;
+		opacity: number;
+	}[] = [];
+
+	for (let i = 0; i < 30; i++) {
+		bubbles.push({
+			x: Math.random() * canvas.width,
+			y: Math.random() * canvas.height,
+			radius: Math.random() * 10 + 3,
+			speed: Math.random() * 0.1 + 0.1,
+			opacity: Math.random() * 0.5 + 0.5,
+		});
+	}
+
+	function animate(): void {
+		if (!context || !canvas) return;
+
+		context.clearRect(0, 0, canvas.width, canvas.height);
+		context.fillStyle = 'rgba(255, 255, 255, 0.5)';
+
+		bubbles.forEach((bubble) => {
+			context.beginPath();
+			context.arc(bubble.x, bubble.y, bubble.radius, 0, 2 * Math.PI);
+			context.fillStyle = `rgba(238, 217, 247, ${bubble.opacity})`;
+			context.fill();
+
+			bubble.y -= bubble.speed;
+
+			if (bubble.y + bubble.radius < 0) {
+				bubble.y = canvas.height + bubble.radius;
+				bubble.x = Math.random() * canvas.width;
+				bubble.opacity = Math.random() * 0.5 + 0.5;
+				bubble.radius = Math.random() * 10 + 3;
+			}
+		});
+
+		requestAnimationFrame(animate);
+	}
+
+	animate();
+
+	window.addEventListener('resize', () => {
+		canvas.width = window.innerWidth;
+		canvas.height = window.innerHeight;
+	});
+}

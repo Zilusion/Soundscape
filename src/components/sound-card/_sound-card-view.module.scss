@@ -1,24 +1,56 @@
+@use '../../styles/main.scss' as *;
+
 .card {
+	display: grid;
+	grid-template-rows: auto 1fr 1fr;
+	place-items: center;
 	min-width: 200px;
 	max-width: 250px;
 	min-height: 200px;
-	background-color: transparent;
-	border: 1px solid lightblue;
+	// border: 1px solid var(--primary-color);
 	border-radius: 10px;
-	display: grid;
-	place-items: center;
-	grid-template-rows: auto 1fr 1fr;
+	// background: rgba(0, 0, 0, 0.3);
+	z-index: 1;
+	// backdrop-filter: blur(3px);
+	border-radius: 10px;
+	transition: all 0.2s ease;
+
+	&:hover {
+		// background: rgba(0, 0, 0, 0.5);
+
+		.icon {
+			// fill: var(--primary-color);
+		}
+
+		.title {
+			opacity: 1;
+		}
+
+		.slider {
+			opacity: 1;
+		}
+	}
 }
 
 .icon {
+	align-self: center;
 	width: 90px;
 	height: 90px;
-	align-self: center;
+	fill: var(--secondary-color);
+	transition: all 0.2s ease;
 }
 
 .title {
+	margin: 0.5rem 0;
+	font-size: 1.2rem;
+	font-weight: bold;
+	opacity: 0;
+	transition: all 0.2s ease;
 }
 
 .slider {
 	width: 100px;
+	accent-color: var(--secondary-color);
+	opacity: 0;
+	transition: all 0.2s ease;
 }

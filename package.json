@@ -10,6 +10,7 @@
 		"format": "prettier --write .",
 		"lint": "eslint . --ext .ts,.js",
 		"stylelint": "stylelint 'src/**/*.{scss,css}'",
+		"stylelint:fix": "stylelint 'src/**/*.{scss,css}' --fix",
 		"prepare": "cd .. && husky decision-making-tool/.husky"
 	},
 	"devDependencies": {

@@ -1,0 +1,73 @@
+@use 'variables';
+
+@mixin visually-hidden {
+	position: absolute;
+	overflow: hidden;
+	width: 1px;
+	height: 1px;
+	margin: -1px;
+	padding: 0;
+	border: 0;
+	white-space: nowrap;
+	clip: rect(0, 0, 0, 0);
+}
+
+@mixin media-xxl {
+	@media screen and (max-width: variables.$xxl) {
+		@content;
+	}
+}
+
+@mixin media-xl {
+	@media screen and (max-width: variables.$xl) {
+		@content;
+	}
+}
+
+@mixin media-lg {
+	@media screen and (max-width: variables.$lg) {
+		@content;
+	}
+}
+
+@mixin media-ml {
+	@media screen and (max-width: variables.$ml) {
+		@content;
+	}
+}
+
+@mixin media-md {
+	@media screen and (max-width: variables.$md) {
+		@content;
+	}
+}
+
+@mixin media-ms {
+	@media screen and (max-width: variables.$ms) {
+		@content;
+	}
+}
+
+@mixin media-sm {
+	@media screen and (max-width: variables.$sm) {
+		@content;
+	}
+}
+
+@mixin media-xs {
+	@media screen and (max-width: variables.$xs) {
+		@content;
+	}
+}
+
+@mixin media-xxs {
+	@media screen and (max-width: variables.$xxs) {
+		@content;
+	}
+}
+
+@mixin prefers-reduced-motion {
+	@media screen and (prefers-reduced-motion: reduce) {
+		@content;
+	}
+}
