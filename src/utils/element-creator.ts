@@ -43,6 +43,11 @@ export default class ElementCreator {
 		return this;
 	}
 
+	public toggleClass(className: string, value: boolean): this {
+		this.element.classList.toggle(className, value);
+		return this;
+	}
+
 	public addClasses(classNames: string | string[]): this {
 		(Array.isArray(classNames) ? classNames : [classNames])
 			.filter((className) => className !== undefined)
@@ -84,6 +89,13 @@ export default class ElementCreator {
 	public setStyle(styles: Partial<CSSStyleDeclaration>): this {
 		if (this.element instanceof HTMLElement) {
 			Object.assign(this.element.style, styles);
+		}
+		return this;
+	}
+
+	public setStyleProperty(property: string, value: string | null): this {
+		if (this.element instanceof HTMLElement) {
+			this.element.style.setProperty(property, value);
 		}
 		return this;
 	}

@@ -1,8 +1,13 @@
 import { ReactiveProperty } from './reactive-property';
 
+export type CardState = {
+	volume: number;
+	active: boolean;
+};
+
 export type AppSettingsData = {
 	volume: number;
-	cards: Record<string, number>;
+	cards: Record<string, CardState>;
 };
 
 const DEFAULT_SETTINGS: AppSettingsData = {
@@ -10,23 +15,37 @@ const DEFAULT_SETTINGS: AppSettingsData = {
 	cards: {},
 };
 
-function isAppSettingsData(object: unknown): object is AppSettingsData {
-	if (typeof object !== 'object' || object === null) return false;
-	const data: Partial<AppSettingsData> | null =
-		object !== null && typeof object === 'object' ? object : null;
-	return (
-		data !== null &&
-		typeof data.volume === 'number' &&
-		typeof data.cards === 'object' &&
-		data.cards !== null &&
-		Object.values(data.cards).every((value) => typeof value === 'number')
-	);
+function isRecord(object: unknown): object is Record<string, unknown> {
+	return typeof object === 'object' && object !== null;
+}
+
+export function isAppSettingsData(object: unknown): object is AppSettingsData {
+	if (!isRecord(object)) return false;
+
+	if (!('volume' in object) || typeof object['volume'] !== 'number') {
+		return false;
+	}
+
+	if (!('cards' in object)) return false;
+	const cardsValue = object['cards'];
+	if (!isRecord(cardsValue)) return false;
+
+	const cardStates = Object.values(cardsValue);
+	for (const value of cardStates) {
+		if (!isRecord(value)) return false;
+		if (!('volume' in value) || typeof value['volume'] !== 'number')
+			return false;
+		if (!('active' in value) || typeof value['active'] !== 'boolean')
+			return false;
+	}
+
+	return true;
 }
 
 export class GlobalSettings {
 	private static instance: GlobalSettings;
 	public previousVolume: number = DEFAULT_SETTINGS.volume;
-	private _cards: ReactiveProperty<Record<string, number>>;
+	private _cards: ReactiveProperty<Record<string, CardState>>;
 	private _volume: ReactiveProperty<number>;
 	private _paused: ReactiveProperty<boolean>;
 
@@ -54,7 +73,9 @@ export class GlobalSettings {
 
 		this._volume = new ReactiveProperty<number>(Number(data.volume));
 		this._paused = new ReactiveProperty<boolean>(true);
-		this._cards = new ReactiveProperty<Record<string, number>>(data.cards);
+		this._cards = new ReactiveProperty<Record<string, CardState>>(
+			data.cards,
+		);
 
 		this._volume.subscribe(() => {
 			this.save();
@@ -75,7 +96,7 @@ export class GlobalSettings {
 		return this._paused.value;
 	}
 
-	public get cards(): Record<string, number> {
+	public get cards(): Record<string, CardState> {
 		return this._cards.value;
 	}
 
@@ -87,7 +108,7 @@ export class GlobalSettings {
 		this._paused.value = value;
 	}
 
-	public set cards(value: Record<string, number>) {
+	public set cards(value: Record<string, CardState>) {
 		this._cards.value = value;
 	}
 
@@ -98,14 +119,28 @@ export class GlobalSettings {
 		return GlobalSettings.instance;
 	}
 
-	public setCardVolume(id: string, volume: number): void {
-		const currentCards = { ...this._cards.value };
-		currentCards[id] = volume;
-		this._cards.value = currentCards;
+	public getCardVolume(id: string): number | undefined {
+		return this._cards.value[id]?.volume;
 	}
 
-	public getCardVolume(id: string): number | undefined {
-		return this._cards.value[id];
+	public setCardVolume(id: string, volume: number): void {
+		const current = { ...this._cards.value };
+		const card = current[id] ?? { volume: 0, active: false };
+		card.volume = volume;
+		current[id] = card;
+		this._cards.value = current;
+	}
+
+	public getCardActive(id: string): boolean | undefined {
+		return this._cards.value[id]?.active;
+	}
+
+	public setCardActive(id: string, active: boolean): void {
+		const current = { ...this._cards.value };
+		const card = current[id] ?? { volume: 0, active: false };
+		card.active = active;
+		current[id] = card;
+		this._cards.value = current;
 	}
 
 	public onVolumeChange(callback: (volume: number) => void): void {
@@ -117,7 +152,7 @@ export class GlobalSettings {
 	}
 
 	public onCardsChange(
-		callback: (cards: Record<string, number>) => void,
+		callback: (cards: Record<string, CardState>) => void,
 	): void {
 		this._cards.subscribe(callback);
 	}
@@ -126,9 +161,24 @@ export class GlobalSettings {
 		localStorage.removeItem('appSettings');
 		this._volume.value = DEFAULT_SETTINGS.volume;
 		this._paused.value = true;
-		this._cards.value = { ...DEFAULT_SETTINGS.cards };
+		const currentCards = { ...this._cards.value };
+		Object.keys(currentCards).forEach((id) => {
+			currentCards[id] = {
+				volume: 0,
+				active: false,
+			};
+		});
+		this._cards.value = currentCards;
 		this.save();
 	}
+
+	// public reset(): void {
+	// 	localStorage.removeItem('appSettings');
+	// 	this._volume.value = DEFAULT_SETTINGS.volume;
+	// 	this._paused.value = true;
+	// 	this._cards.value = { ...DEFAULT_SETTINGS.cards };
+	// 	this.save();
+	// }
 
 	private save(): void {
 		const data: AppSettingsData = {

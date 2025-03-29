@@ -2,9 +2,9 @@
 
 .page {
 	margin-top: 0;
-    display: grid;
-    place-content: center;
-    height: 100%;
+	// display: grid;
+	// place-content: center;
+	height: 100%;
 }
 
 .container {
@@ -19,12 +19,12 @@
 	gap: 10px;
 	align-items: center;
 	justify-content: center;
-    opacity: 0;
-    transition: opacity 0.2s ease;
+	opacity: 0;
+	transition: opacity 0.2s ease;
 
-    &:hover {
-        opacity: 1;
-    }
+	&:hover {
+		opacity: 1;
+	}
 }
 
 .global-volume-slider {
@@ -46,9 +46,8 @@
 }
 
 .sound-cards {
-	display: flex;
-	flex-wrap: wrap;
-	gap: 10px;
-	align-items: center;
-	justify-content: center;
+	display: grid;
+	gap: 50px;
+	place-items: center;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }

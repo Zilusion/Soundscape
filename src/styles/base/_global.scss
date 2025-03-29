@@ -4,7 +4,18 @@ body {
 	font-family: var(--font-family);
 	font-size: var(--font-size-base);
 	// background-color: var(--background-color);
-    // background: linear-gradient(180deg, #100f24 0%, #243b63 80%, #a597ba 100%);
-    background: linear-gradient(0deg, rgba(0, 0, 0, 0.465) 0%, rgba(0, 0, 0, 0.609) 100%), radial-gradient(circle at 50% 110%, #a597ba 0%, #243b63 35%, #100f24 100%);
+	// background: linear-gradient(180deg, #100f24 0%, #243b63 80%, #a597ba 100%);
+	background:
+		linear-gradient(
+			0deg,
+			rgba(0, 0, 0, 0.465) 0%,
+			rgba(0, 0, 0, 0.609) 100%
+		),
+		radial-gradient(
+			circle at 50% 110%,
+			#a597ba 0%,
+			#243b63 35%,
+			#100f24 100%
+		);
 	color: var(--text-color);
 }

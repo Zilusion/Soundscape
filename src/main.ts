@@ -250,6 +250,48 @@ const soundCardData = [
 		soundPath: '/assets/sounds/thunder.mp3',
 		volume: 0,
 	},
+	{
+		id: 'wind1',
+		title: 'Ветер',
+		iconPath: '#icon-wind',
+		soundPath: '/assets/sounds/light-breeze.mp3',
+		volume: 0,
+	},
+	{
+		id: 'rain1',
+		title: 'Дождь',
+		iconPath: '#icon-rain',
+		soundPath: '/assets/sounds/rain.mp3',
+		volume: 0,
+	},
+	{
+		id: 'thunder1',
+		title: 'Гроза',
+		iconPath: '#icon-thunder',
+		soundPath: '/assets/sounds/thunder.mp3',
+		volume: 0,
+	},
+	{
+		id: 'wind2',
+		title: 'Ветер',
+		iconPath: '#icon-wind',
+		soundPath: '/assets/sounds/light-breeze.mp3',
+		volume: 0,
+	},
+	{
+		id: 'rain2',
+		title: 'Дождь',
+		iconPath: '#icon-rain',
+		soundPath: '/assets/sounds/rain.mp3',
+		volume: 0,
+	},
+	{
+		id: 'thunder2',
+		title: 'Гроза',
+		iconPath: '#icon-thunder',
+		soundPath: '/assets/sounds/thunder.mp3',
+		volume: 0,
+	},
 ];
 
 const pageModel = new SoundCardsPageModel(soundCardData);

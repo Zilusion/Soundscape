@@ -26,12 +26,28 @@ export class SoundCardViewModel {
 		return this.model.volume;
 	}
 
+	public get active(): boolean {
+		return this.model.active;
+	}
+
 	public set volume(value: number) {
 		this.model.volume = value;
 	}
 
+	public set active(value: boolean) {
+		this.model.active = value;
+	}
+
+	public toggleActive(): void {
+		this.model.active = !this.model.active;
+	}
+
 	public onVolumeChange(callback: (volume: number) => void): void {
 		this.model.onVolumeChange(callback);
+	}
+
+	public onActiveChange(callback: (active: boolean) => void): void {
+		this.model.onActiveChange(callback);
 	}
 
 	public playSound(): void {

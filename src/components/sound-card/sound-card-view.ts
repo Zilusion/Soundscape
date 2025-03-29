@@ -4,21 +4,28 @@ import classes from './_sound-card-view.module.scss';
 
 export class SoundCardView extends ElementCreator {
 	private viewModel: SoundCardViewModel;
-	private icon: SVGSVGElement | undefined;
-	private title: HTMLElement | undefined;
-	private slider: HTMLInputElement | undefined;
 
 	constructor(viewModel: SoundCardViewModel) {
 		super({
 			tag: 'div',
-			classes: classes.card,
+			classes: [classes.card],
 		});
 		this.viewModel = viewModel;
+
+		this.setStyleProperty('--volume', this.viewModel.volume.toString());
 
 		const svgIcon = ElementCreator.create({
 			tag: 'svg',
 			namespace: 'http://www.w3.org/2000/svg',
 			classes: classes.icon,
+			on: {
+				click: () => {
+					if (this.viewModel.volume === 0) {
+						this.viewModel.volume = 100;
+					}
+					this.viewModel.toggleActive();
+				},
+			},
 		});
 
 		const useElement = ElementCreator.create({
@@ -31,31 +38,59 @@ export class SoundCardView extends ElementCreator {
 
 		svgIcon.append(useElement);
 		if (svgIcon instanceof SVGSVGElement) {
-			this.icon = svgIcon;
-			this.icon.style.opacity = `${this.viewModel.volume / 100}`;
-			this.append([this.icon]);
+			this.append(svgIcon);
 		}
 
-		const title = ElementCreator.create({
-			tag: 'h2',
-			classes: classes.title,
-			content: this.viewModel.title,
+		const range = ElementCreator.create({
+			tag: 'div',
+			classes: classes.range,
 		});
 
-		if (title instanceof HTMLElement) {
-			this.title = title;
-			this.append(this.title);
-		}
+		const rangeLabel = ElementCreator.create({
+			tag: 'label',
+			classes: classes['range-label'],
+			attributes: {
+				for: `sound-card-${this.viewModel.id}`,
+			},
+			content: `${this.viewModel.title}`,
+		});
+
+		const track = ElementCreator.create({
+			tag: 'div',
+			classes: classes.track,
+		});
+
+		const progress = ElementCreator.create({
+			tag: 'div',
+			classes: classes.progress,
+		});
+
+		const thumbs = ElementCreator.create({
+			tag: 'div',
+			classes: classes.thumbs,
+		});
+
+		const output = ElementCreator.create({
+			tag: 'output',
+			classes: classes['range-output'],
+			attributes: {
+				for: `sound-card-${this.viewModel.id}`,
+				id: `sound-card-${this.viewModel.id}-output`,
+			},
+			content: `${this.viewModel.volume}`,
+		});
 
 		const slider = ElementCreator.create({
 			tag: 'input',
+			classes: classes['range-input'],
 			attributes: {
+				id: `sound-card-${this.viewModel.id}`,
 				type: 'range',
 				min: '0',
 				max: '100',
-				value: '0',
+				value: `${this.viewModel.volume}`,
+				step: '1',
 			},
-			classes: classes.slider,
 			on: {
 				input: (event: Event): void => {
 					if (event.target instanceof HTMLInputElement) {
@@ -65,20 +100,45 @@ export class SoundCardView extends ElementCreator {
 			},
 		});
 
-		if (slider instanceof HTMLInputElement) {
-			this.slider = slider;
-			this.append(this.slider);
-			this.slider.value = String(this.viewModel.volume);
-		}
+		thumbs.append(slider, output);
+		range.append(rangeLabel, track, progress, thumbs);
+		this.append(range);
 
-		this.viewModel.onVolumeChange(() => {
-			if (this.slider) {
-				this.slider.value = String(this.viewModel.volume);
+		this.viewModel.onVolumeChange((volume) => {
+			if (volume === 0) {
+				this.removeClass(classes.active);
+				this.viewModel.active = false;
+				if (slider instanceof HTMLInputElement) {
+					slider.disabled = true;
+				}
+			} else {
+				if (slider instanceof HTMLInputElement) {
+					slider.removeAttribute('disabled');
+				}
 			}
-			if (this.icon) {
-				this.icon.style.opacity = String(this.viewModel.volume / 100);
+
+			this.setStyleProperty('--volume', this.viewModel.volume.toString());
+			if (slider instanceof HTMLInputElement) {
+				slider.value = String(volume);
+			}
+			if (output instanceof HTMLOutputElement) {
+				output.value = String(volume);
 			}
 		});
+
+		this.viewModel.onActiveChange((isActive) => {
+			if (isActive) {
+				this.addClass(classes.active);
+			} else {
+				this.removeClass(classes.active);
+			}
+		});
+
+		if (this.viewModel.active) {
+			this.addClass(classes.active);
+		} else {
+			this.removeClass(classes.active);
+		}
 	}
 
 	public render(): Element {
