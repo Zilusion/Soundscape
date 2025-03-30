@@ -1,34 +1,80 @@
 @use '../../styles/main.scss' as *;
+@use 'sass:math';
 
-.card {
+.page {
+	height: 100%;
+}
+
+.container {
+	@extend .container;
 	display: grid;
-	grid-template-rows: auto 1fr;
+	gap: var(--spacing-large);
+	padding-top: 200px;
+}
+
+.controls {
+	display: grid;
+	grid-template-areas: 
+	"play-pause-button play-pause-button play-pause-button"
+		"mute-button range reset-button";
+	grid-template-columns: 1fr 2fr 1fr;
+	gap: 30px 10px;
+	transition: opacity 0.2s ease;
+
 	place-items: center;
-	min-width: 200px;
-	max-width: 250px;
-	min-height: 200px;
-	border-radius: 10px;
-	z-index: 1;
-	// backdrop-filter: blur(3px);
-	border-radius: 10px;
-	transition: all 0.2s ease;
 
-	&.active {
-		.range {
-			opacity: 1;
-			display: block;
-
-			@starting-style {
-				opacity: 0;
-			}
-		}
+	&:hover {
+		opacity: 1;
 	}
 }
-.toggle-button {
-	background: none;
-	border: none;
+
+.mute-button {
 	cursor: pointer;
-	transition: all 0.2s ease;
+	outline-offset: 5px;
+	grid-area: mute-button;
+
+	svg {
+		width: 40px;
+		height: 40px;
+		fill: var(--accent-color);
+		transition: fill 0.3s ease;
+	}
+
+	&:hover svg {
+		scale: 1.1;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--accent-color);
+	}
+
+	&:active svg {
+		transition-duration: 0.05s;
+		scale: 0.9;
+	}
+}
+
+.play-pause-button {
+	border-color: transparent transparent transparent var(--accent-color);
+	transition: 0.3s border-color ease;
+	will-change: border-width;
+	cursor: pointer;
+	height: 74px;
+	outline-offset: 10px;
+	grid-area: play-pause-button;
+	transition: scale, border-width;
+	transition-duration: 0.2s;
+	transition-timing-function: ease;
+
+	&.pause {
+		border-style: double;
+		border-width: 0 0 0 60px;
+	}
+
+	&.play {
+		border-style: solid;
+		border-width: 37px 0 37px 60px;
+	}
 
 	&:hover {
 		scale: 1.1;
@@ -40,40 +86,54 @@
 
 	&:active {
 		transition-duration: 0.05s;
-		scale: 0.9;
+		transform: scale(0.9);
 	}
 }
 
-.icon {
-	align-self: center;
-	width: 90px;
-	height: 90px;
-	fill: var(--accent-color);
-	transition: all 0.2s ease;
-	opacity: clamp(0.15, calc(var(--volume) / 100), 1);
+.reset-button {
+	cursor: pointer;
+	outline-offset: 5px;
+	grid-area: reset-button;
+
+	svg {
+		width: 40px;
+		height: 40px;
+		fill: var(--accent-color);
+		transition: all 0.2s ease;
+	}
+
+	&:hover svg {
+		rotate: -45deg;
+	}
+
+	&:focus-visible {
+		outline: 2px solid var(--accent-color);
+	}
+
+	&:active svg {
+		transition-duration: 0.05s;
+		rotate: 45deg;
+	}
+}
+
+.sound-cards {
+	display: grid;
+	gap: 50px;
+	place-items: center;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
 .range {
-	--range-track-top: 50px;
+	--range-track-top: 0px;
 	--range-track-height: 8px;
 	--range-output-left: calc(var(--volume) * 1%);
 	--range-output-offset-xy: calc(var(--volume) * -1%), 0;
 	position: relative;
-	width: min(150px, 70%);
-	opacity: 0;
-	display: none;
-	transition:
-		opacity 0.7s,
-		max-height 0.7s,
-		padding-block 0.7s,
-		transform 0.7s,
-		overlay 0.7s allow-discrete,
-		display 0.7s allow-discrete;
-
-	@starting-style {
-		opacity: 0;
-		display: none;
-	}
+	z-index: 1;
+	width: 100%;
+	min-width: 150px;
+	height: calc(var(--range-track-height) * 2);
+	grid-area: range;
 }
 
 .range-label {
@@ -189,3 +249,37 @@
 	user-select: none;
 	transition: 300ms;
 }
+
+.line-block {
+	width: 100vw;
+	position: absolute;
+	top: 0;
+	left: 0;
+	z-index: 1;
+	transition: 300ms;
+
+	&::before {
+		content: '123';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 20px;
+		background-color: white;
+		z-index: 2;
+	}
+
+	&::after {
+		content: '';
+		position: absolute;
+		top: 20px;
+		left: 0;
+		width: 100vw;
+		height: calc(100vw * (77.78 / 1440));
+		z-index: 2;
+		color: white;
+		background-color: white;
+		mask: url('/assets/icons/top-line.svg') no-repeat center center/cover;
+	}
+}
+

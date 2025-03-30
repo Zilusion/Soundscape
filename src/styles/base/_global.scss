@@ -1,6 +1,6 @@
 html,
 body {
-	height: 100vh;
+	min-height: 100vh;
 	font-family: var(--font-family);
 	font-size: var(--font-size-base);
 	// background-color: var(--background-color);
@@ -18,4 +18,5 @@ body {
 			#100f24 100%
 		);
 	color: var(--text-color);
+	background-attachment: fixed;
 }

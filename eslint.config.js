@@ -32,6 +32,7 @@ export default [
 			'**/eslint.config.js',
 			'**/stylelint.config.js',
 			'**/commitlint.config.cjs',
+			'**/plugins/**/*.js',
 		],
 	},
 

@@ -1,15 +1,13 @@
 import Inspect from 'vite-plugin-inspect';
-import { createSvgIconsPlugin } from 'vite-plugin-svg-icons';
-import path from 'node:path';
+import ViteSvgSpritePlugin from './plugins/vite-svg-sprite';
 
 export default {
 	base: '/',
 	plugins: [
 		Inspect(),
-		createSvgIconsPlugin({
-			iconDirs: [path.resolve(process.cwd(), 'src/assets/icons')],
-			symbolId: 'icon-[name]',
-			svgoOptions: true,
+		ViteSvgSpritePlugin({
+			iconsDir: 'public/assets/icons',
+			outputSprite: 'public/icon-sprite.svg'
 		}),
 	],
 };

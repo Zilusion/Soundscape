@@ -71,3 +71,30 @@
 		@content;
 	}
 }
+
+@mixin wave(
+	$position: bottom,
+	$offset: 0px,
+	$aspect-ratio: 77.78 / 1440,
+	$background: none,
+	$mask: none
+) {
+	position: absolute;
+	#{$position}: $offset;
+	left: 0;
+	content: '';
+	display: block;
+	width: 100vw;
+	height: calc(100vw * #{$aspect-ratio});
+
+	@if $background != none {
+		background: $background no-repeat center center/cover;
+	}
+
+	@if $mask != none {
+		mask-image: $mask;
+		mask-size: cover;
+		mask-repeat: no-repeat;
+		mask-position: center center;
+	}
+}

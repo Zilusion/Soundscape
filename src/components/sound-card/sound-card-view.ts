@@ -14,10 +14,9 @@ export class SoundCardView extends ElementCreator {
 
 		this.setStyleProperty('--volume', this.viewModel.volume.toString());
 
-		const svgIcon = ElementCreator.create({
-			tag: 'svg',
-			namespace: 'http://www.w3.org/2000/svg',
-			classes: classes.icon,
+		const toggleButton = ElementCreator.create({
+			tag: 'button',
+			classes: classes['toggle-button'],
 			on: {
 				click: () => {
 					if (this.viewModel.volume === 0) {
@@ -26,6 +25,12 @@ export class SoundCardView extends ElementCreator {
 					this.viewModel.toggleActive();
 				},
 			},
+		});
+
+		const svgIcon = ElementCreator.create({
+			tag: 'svg',
+			namespace: 'http://www.w3.org/2000/svg',
+			classes: classes.icon,
 		});
 
 		const useElement = ElementCreator.create({
@@ -38,7 +43,7 @@ export class SoundCardView extends ElementCreator {
 
 		svgIcon.append(useElement);
 		if (svgIcon instanceof SVGSVGElement) {
-			this.append(svgIcon);
+			toggleButton.append(svgIcon);
 		}
 
 		const range = ElementCreator.create({
@@ -102,7 +107,7 @@ export class SoundCardView extends ElementCreator {
 
 		thumbs.append(slider, output);
 		range.append(rangeLabel, track, progress, thumbs);
-		this.append(range);
+		this.append([toggleButton, range]);
 
 		this.viewModel.onVolumeChange((volume) => {
 			if (volume === 0) {
