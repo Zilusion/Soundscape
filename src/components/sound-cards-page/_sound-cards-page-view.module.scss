@@ -3,20 +3,71 @@
 
 .page {
 	height: 100%;
+
+	&::before {
+		content: '123';
+		position: absolute;
+		top: 0;
+		left: 0;
+		width: 100vw;
+		height: 20px;
+		background-color: white;
+		z-index: 2;
+	}
+
+	&::after {
+		content: '';
+		position: absolute;
+		top: 20px;
+		left: 0;
+		width: 100vw;
+		height: calc(100vw * (77.78 / 1440));
+		z-index: 2;
+		color: white;
+		background-color: white;
+		mask: url('/assets/icons/top-line.svg') no-repeat center center/cover;
+	}
+}
+
+.section {
+	padding-block: 200px;
+	width: 100%;
+	position: relative;
+
+	&::after {
+		content: '';
+		position: absolute;
+		bottom: 0px;
+		left: 0;
+		width: 100vw;
+		height: calc(100vw * (116 / 1440));
+		z-index: 2;
+		color: white;
+		background-color: white;
+		mask: url('/assets/icons/bottom-line.svg') no-repeat center center/cover;
+	}
 }
 
 .container {
 	@extend .container;
 	display: grid;
 	gap: var(--spacing-large);
-	padding-top: 200px;
+}
+
+.canvas {
+	top: 0;
+	left: 0;
+	width: 100vw;
+	height: 100vh;
+	position: fixed;
+	pointer-events: none;
 }
 
 .controls {
 	display: grid;
-	grid-template-areas: 
-	"play-pause-button play-pause-button play-pause-button"
-		"mute-button range reset-button";
+	grid-template-areas:
+		'play-pause-button play-pause-button play-pause-button'
+		'mute-button range reset-button';
 	grid-template-columns: 1fr 2fr 1fr;
 	gap: 30px 10px;
 	transition: opacity 0.2s ease;
@@ -258,28 +309,27 @@
 	z-index: 1;
 	transition: 300ms;
 
-	&::before {
-		content: '123';
-		position: absolute;
-		top: 0;
-		left: 0;
-		width: 100vw;
-		height: 20px;
-		background-color: white;
-		z-index: 2;
-	}
+	// &::before {
+	// 	content: '123';
+	// 	position: absolute;
+	// 	top: 0;
+	// 	left: 0;
+	// 	width: 100vw;
+	// 	height: 20px;
+	// 	background-color: white;
+	// 	z-index: 2;
+	// }
 
-	&::after {
-		content: '';
-		position: absolute;
-		top: 20px;
-		left: 0;
-		width: 100vw;
-		height: calc(100vw * (77.78 / 1440));
-		z-index: 2;
-		color: white;
-		background-color: white;
-		mask: url('/assets/icons/top-line.svg') no-repeat center center/cover;
-	}
+	// &::after {
+	// 	content: '';
+	// 	position: absolute;
+	// 	top: 20px;
+	// 	left: 0;
+	// 	width: 100vw;
+	// 	height: calc(100vw * (77.78 / 1440));
+	// 	z-index: 2;
+	// 	color: white;
+	// 	background-color: white;
+	// 	mask: url('/assets/icons/top-line.svg') no-repeat center center/cover;
+	// }
 }
-

@@ -7,7 +7,7 @@ export default {
 		Inspect(),
 		ViteSvgSpritePlugin({
 			iconsDir: 'public/assets/icons',
-			outputSprite: 'public/icon-sprite.svg'
+			outputSprite: 'public/icon-sprite.svg',
 		}),
 	],
 };

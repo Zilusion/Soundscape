@@ -2,7 +2,7 @@
 @forward 'base/mixins';
 @forward 'base/reset';
 
-// @forward 'base/typography';
+@forward 'base/typography';
 @forward 'base/buttons';
-@forward 'base/containers';
 @forward 'base/global';
+@forward 'base/containers';

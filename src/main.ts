@@ -233,7 +233,7 @@ const soundCardData = [
 		id: 'wind',
 		title: 'Ветер',
 		iconPath: '/icon-sprite.svg#wind',
-		soundPath: '/assets/sounds/light-breeze.mp3',
+		soundPath: '/assets/sounds/wind.mp3',
 		volume: 0,
 	},
 	{
@@ -251,45 +251,66 @@ const soundCardData = [
 		volume: 0,
 	},
 	{
-		id: 'wind1',
-		title: 'Ветер',
-		iconPath: '/icon-sprite.svg#wind',
-		soundPath: '/assets/sounds/light-breeze.mp3',
+		id: 'blizzard',
+		title: 'Метель',
+		iconPath: '/icon-sprite.svg#blizzard',
+		soundPath: '/assets/sounds/blizzard.mp3',
 		volume: 0,
 	},
 	{
-		id: 'rain1',
-		title: 'Дождь',
-		iconPath: '/icon-sprite.svg#rain',
-		soundPath: '/assets/sounds/rain.mp3',
+		id: 'campfire',
+		title: 'Костёр',
+		iconPath: '/icon-sprite.svg#campfire',
+		soundPath: '/assets/sounds/campfire.mp3',
 		volume: 0,
 	},
 	{
-		id: 'thunder1',
-		title: 'Гроза',
-		iconPath: '/icon-sprite.svg#thunder',
-		soundPath: '/assets/sounds/thunder.mp3',
+		id: 'forest',
+		title: 'Лес',
+		iconPath: '/icon-sprite.svg#forest',
+		soundPath: '/assets/sounds/forest.mp3',
 		volume: 0,
 	},
 	{
-		id: 'wind2',
-		title: 'Ветер',
-		iconPath: '/icon-sprite.svg#wind',
-		soundPath: '/assets/sounds/light-breeze.mp3',
+		id: 'leaves',
+		title: 'Листья',
+		iconPath: '/icon-sprite.svg#leaves',
+		soundPath: '/assets/sounds/leaves.mp3',
 		volume: 0,
 	},
 	{
-		id: 'rain2',
-		title: 'Дождь',
-		iconPath: '/icon-sprite.svg#rain',
-		soundPath: '/assets/sounds/rain.mp3',
+		id: 'night',
+		title: 'Ночь',
+		iconPath: '/icon-sprite.svg#night',
+		soundPath: '/assets/sounds/night.mp3',
 		volume: 0,
 	},
 	{
-		id: 'thunder2',
-		title: 'Гроза',
-		iconPath: '/icon-sprite.svg#thunder',
-		soundPath: '/assets/sounds/thunder.mp3',
+		id: 'river',
+		title: 'Река',
+		iconPath: '/icon-sprite.svg#river',
+		soundPath: '/assets/sounds/river.mp3',
+		volume: 0,
+	},
+	{
+		id: 'waves',
+		title: 'Волны',
+		iconPath: '/icon-sprite.svg#waves',
+		soundPath: '/assets/sounds/waves.mp3',
+		volume: 0,
+	},
+	{
+		id: 'bell',
+		title: 'Колокольчик',
+		iconPath: '/icon-sprite.svg#bell',
+		soundPath: '/assets/sounds/bell.mp3',
+		volume: 0,
+	},
+	{
+		id: 'handpan',
+		title: 'Ханг',
+		iconPath: '/icon-sprite.svg#handpan',
+		soundPath: '/assets/sounds/handpan.mp3',
 		volume: 0,
 	},
 ];
@@ -299,67 +320,3 @@ const pageViewModel = new SoundCardsPageViewModel(pageModel);
 const pageView = new SoundCardsPageView(pageViewModel);
 
 document.body.append(pageView.getElement());
-
-const canvasElement = document.querySelector('#canvas');
-let canvas: HTMLCanvasElement | null = null;
-if (canvasElement instanceof HTMLCanvasElement) {
-	canvas = canvasElement;
-} else {
-	throw new TypeError('Canvas element is not found');
-}
-const context = canvas.getContext('2d');
-
-if (canvas && context) {
-	canvas.width = window.innerWidth;
-	canvas.height = window.innerHeight;
-
-	const bubbles: {
-		x: number;
-		y: number;
-		radius: number;
-		speed: number;
-		opacity: number;
-	}[] = [];
-
-	for (let i = 0; i < 30; i++) {
-		bubbles.push({
-			x: Math.random() * canvas.width,
-			y: Math.random() * canvas.height,
-			radius: Math.random() * 10 + 3,
-			speed: Math.random() * 0.1 + 0.1,
-			opacity: Math.random() * 0.5 + 0.5,
-		});
-	}
-
-	function animate(): void {
-		if (!context || !canvas) return;
-
-		context.clearRect(0, 0, canvas.width, canvas.height);
-		context.fillStyle = 'rgba(255, 255, 255, 0.5)';
-
-		bubbles.forEach((bubble) => {
-			context.beginPath();
-			context.arc(bubble.x, bubble.y, bubble.radius, 0, 2 * Math.PI);
-			context.fillStyle = `rgba(238, 217, 247, ${bubble.opacity})`;
-			context.fill();
-
-			bubble.y -= bubble.speed;
-
-			if (bubble.y + bubble.radius < 0) {
-				bubble.y = canvas.height + bubble.radius;
-				bubble.x = Math.random() * canvas.width;
-				bubble.opacity = Math.random() * 0.5 + 0.5;
-				bubble.radius = Math.random() * 10 + 3;
-			}
-		});
-
-		requestAnimationFrame(animate);
-	}
-
-	animate();
-
-	window.addEventListener('resize', () => {
-		canvas.width = window.innerWidth;
-		canvas.height = window.innerHeight;
-	});
-}

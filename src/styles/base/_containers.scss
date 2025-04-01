@@ -2,9 +2,6 @@
 @use './_mixins' as mixins;
 
 /* Containers */
-.page {
-}
-
 .container {
 	width: 100%;
 	max-width: var(--container-width);
