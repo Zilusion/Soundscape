@@ -90,3 +90,10 @@
 		padding: 0 var(--container-padding);
 	}
 }
+
+@mixin container {
+	width: 100%;
+	max-width: var(--container-width);
+	margin: 0 auto;
+	padding: 0 var(--container-padding);
+}

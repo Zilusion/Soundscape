@@ -1,4 +1,3 @@
-@use '../../styles/main.scss' as *;
 @use 'sass:math';
 
 .page {
@@ -7,22 +6,22 @@
 	&::before {
 		content: '123';
 		position: absolute;
+		z-index: 2;
 		top: 0;
 		left: 0;
 		width: 100vw;
 		height: 20px;
 		background-color: white;
-		z-index: 2;
 	}
 
 	&::after {
 		content: '';
 		position: absolute;
+		z-index: 2;
 		top: 20px;
 		left: 0;
 		width: 100vw;
 		height: calc(100vw * (77.78 / 1440));
-		z-index: 2;
 		color: white;
 		background-color: white;
 		mask: url('/assets/icons/top-line.svg') no-repeat center center/cover;
@@ -30,18 +29,18 @@
 }
 
 .section {
-	padding-block: 200px;
-	width: 100%;
 	position: relative;
+	width: 100%;
+	padding-block: 200px;
 
 	&::after {
 		content: '';
 		position: absolute;
-		bottom: 0px;
+		z-index: 2;
+		bottom: 0;
 		left: 0;
 		width: 100vw;
 		height: calc(100vw * (116 / 1440));
-		z-index: 2;
 		color: white;
 		background-color: white;
 		mask: url('/assets/icons/bottom-line.svg') no-repeat center center/cover;
@@ -49,18 +48,17 @@
 }
 
 .container {
-	@extend .container;
 	display: grid;
 	gap: var(--spacing-large);
 }
 
 .canvas {
+	pointer-events: none;
+	position: fixed;
 	top: 0;
 	left: 0;
 	width: 100vw;
 	height: 100vh;
-	position: fixed;
-	pointer-events: none;
 }
 
 .controls {
@@ -70,9 +68,8 @@
 		'mute-button range reset-button';
 	grid-template-columns: 1fr 2fr 1fr;
 	gap: 30px 10px;
-	transition: opacity 0.2s ease;
-
 	place-items: center;
+	transition: opacity 0.2s ease;
 
 	&:hover {
 		opacity: 1;
@@ -81,41 +78,45 @@
 
 .mute-button {
 	cursor: pointer;
-	outline-offset: 5px;
 	grid-area: mute-button;
+	outline-offset: 5px;
 
-	svg {
+	&:focus-visible {
+		outline: 2px solid var(--accent-color);
+	}
+
+	& > svg {
 		width: 40px;
 		height: 40px;
 		fill: var(--accent-color);
-		transition: fill 0.3s ease;
+		transition:
+			fill 0.3s ease,
+			scale 0.3s ease;
 	}
 
 	&:hover svg {
 		scale: 1.1;
 	}
 
-	&:focus-visible {
-		outline: 2px solid var(--accent-color);
-	}
-
 	&:active svg {
-		transition-duration: 0.05s;
 		scale: 0.9;
+		transition:
+			fill 0.3s ease,
+			scale 0.05s ease;
 	}
 }
 
 .play-pause-button {
-	border-color: transparent transparent transparent var(--accent-color);
-	transition: 0.3s border-color ease;
 	will-change: border-width;
 	cursor: pointer;
-	height: 74px;
-	outline-offset: 10px;
 	grid-area: play-pause-button;
+	height: 74px;
+	border-color: transparent transparent transparent var(--accent-color);
+	outline-offset: 10px;
+	transition: 0.3s border-color ease;
 	transition: scale, border-width;
-	transition-duration: 0.2s;
 	transition-timing-function: ease;
+	transition-duration: 0.2s;
 
 	&.pause {
 		border-style: double;
@@ -136,42 +137,51 @@
 	}
 
 	&:active {
-		transition-duration: 0.05s;
 		transform: scale(0.9);
+		transition-duration: 0.05s;
 	}
 }
 
 .reset-button {
 	cursor: pointer;
-	outline-offset: 5px;
 	grid-area: reset-button;
+	outline-offset: 5px;
 
-	svg {
+	// --- Styles for the button element itself ---
+	&:focus-visible {
+		outline: 2px solid var(--accent-color);
+	}
+
+	// --- Styles for the nested SVG element (Grouped & Ordered) ---
+
+	// Base SVG styles (Specificity: 0,1,1)
+	& > svg {
+		// You had '>' here originally
 		width: 40px;
 		height: 40px;
 		fill: var(--accent-color);
 		transition: all 0.2s ease;
 	}
 
+	// SVG styles on button hover (Specificity: 0,2,1)
 	&:hover svg {
+		// Target descendant (as original)
 		rotate: -45deg;
 	}
 
-	&:focus-visible {
-		outline: 2px solid var(--accent-color);
-	}
-
+	// SVG styles on button active (Specificity: 0,2,1)
 	&:active svg {
-		transition-duration: 0.05s;
+		// Target descendant (as original)
 		rotate: 45deg;
+		transition-duration: 0.05s;
 	}
 }
 
 .sound-cards {
 	display: grid;
+	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 	gap: 50px;
 	place-items: center;
-	grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
 }
 
 .range {
@@ -179,30 +189,31 @@
 	--range-track-height: 8px;
 	--range-output-left: calc(var(--volume) * 1%);
 	--range-output-offset-xy: calc(var(--volume) * -1%), 0;
+
 	position: relative;
 	z-index: 1;
+	grid-area: range;
 	width: 100%;
 	min-width: 150px;
 	height: calc(var(--range-track-height) * 2);
-	grid-area: range;
 }
 
 .range-label {
 	display: block;
 	margin-block-end: 45px;
-	text-align: center;
 	font-size: 18px;
+	text-align: center;
 	transition: 300ms;
 }
 
 .track {
 	position: absolute;
+	z-index: -1;
 	top: var(--range-track-top);
 	width: 100%;
 	height: var(--range-track-height);
 	border-radius: 10px;
 	background-color: #ababab;
-	z-index: -1;
 }
 
 .thumbs {
@@ -211,32 +222,32 @@
 
 .progress {
 	position: absolute;
+	z-index: -1;
 	top: var(--range-track-top);
 	width: calc(var(--volume) * 1%);
 	height: var(--range-track-height);
 	border-radius: 10px;
 	background-color: var(--accent-color);
-	z-index: -1;
 }
 
 .range-input {
-	width: 100%;
+	cursor: pointer;
 	position: absolute;
 	top: var(--range-track-top);
+	width: 100%;
 	height: var(--range-track-height);
-	cursor: pointer;
-	-webkit-appearance: none;
-	-moz-appearance: none;
+	appearance: none;
+	appearance: none;
 	appearance: none;
 }
 
 .range-input::-webkit-slider-thumb {
-	appearance: none;
-	-webkit-appearance: none;
 	width: 25px;
 	height: 25px;
 	border: none;
 	border-radius: 50%;
+	appearance: none;
+	appearance: none;
 	background: white;
 	box-shadow: 0 0 0 5px inset var(--accent-color);
 	transition: 300ms;
@@ -253,8 +264,8 @@
 }
 
 .range-input:focus-visible {
-	outline-offset: 15px;
 	outline: 1px solid var(--accent-color);
+	outline-offset: 15px;
 }
 
 .range-input:hover::-webkit-slider-thumb,
@@ -270,6 +281,7 @@
 .range-input:active::-webkit-slider-thumb {
 	box-shadow: 0 0 0 15px inset var(--accent-color);
 }
+
 .range-input:active::-moz-range-thumb {
 	box-shadow: 0 0 0 15px inset var(--accent-color);
 }
@@ -291,45 +303,21 @@
 }
 
 .range-output {
+	user-select: none;
 	position: absolute;
 	bottom: 25px;
 	left: var(--range-output-left);
+	transform: translate(var(--range-output-offset-xy));
 	width: 25px;
 	text-align: center;
-	transform: translate(var(--range-output-offset-xy));
-	user-select: none;
 	transition: 300ms;
 }
 
 .line-block {
-	width: 100vw;
 	position: absolute;
+	z-index: 1;
 	top: 0;
 	left: 0;
-	z-index: 1;
+	width: 100vw;
 	transition: 300ms;
-
-	// &::before {
-	// 	content: '123';
-	// 	position: absolute;
-	// 	top: 0;
-	// 	left: 0;
-	// 	width: 100vw;
-	// 	height: 20px;
-	// 	background-color: white;
-	// 	z-index: 2;
-	// }
-
-	// &::after {
-	// 	content: '';
-	// 	position: absolute;
-	// 	top: 20px;
-	// 	left: 0;
-	// 	width: 100vw;
-	// 	height: calc(100vw * (77.78 / 1440));
-	// 	z-index: 2;
-	// 	color: white;
-	// 	background-color: white;
-	// 	mask: url('/assets/icons/top-line.svg') no-repeat center center/cover;
-	// }
 }

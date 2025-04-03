@@ -1,22 +1,44 @@
-@use '../../styles/main.scss' as *;
+.range {
+	--range-track-top: 50px;
+	--range-track-height: 8px;
+	--range-output-left: calc(var(--volume) * 1%);
+	--range-output-offset-xy: calc(var(--volume) * -1%), 0;
+
+	position: relative;
+	display: none;
+	width: min(150px, 70%);
+	opacity: 0;
+	transition:
+		opacity 0.7s,
+		max-height 0.7s,
+		padding-block 0.7s,
+		transform 0.7s,
+		overlay 0.7s allow-discrete,
+		display 0.7s allow-discrete;
+
+	@starting-style {
+		display: none;
+		opacity: 0;
+	}
+}
 
 .card {
+	z-index: 1;
 	display: grid;
 	grid-template-rows: auto 1fr;
 	place-items: center;
 	min-width: 200px;
 	max-width: 250px;
 	min-height: 200px;
-	border-radius: 10px;
-	z-index: 1;
+
 	// backdrop-filter: blur(3px);
 	border-radius: 10px;
 	transition: all 0.2s ease;
 
 	&.active {
 		.range {
-			opacity: 1;
 			display: block;
+			opacity: 1;
 
 			@starting-style {
 				opacity: 0;
@@ -24,10 +46,11 @@
 		}
 	}
 }
+
 .toggle-button {
-	background: none;
-	border: none;
 	cursor: pointer;
+	border: none;
+	background: none;
 	transition: all 0.2s ease;
 
 	&:hover {
@@ -39,8 +62,8 @@
 	}
 
 	&:active {
-		transition-duration: 0.05s;
 		scale: 0.9;
+		transition-duration: 0.05s;
 	}
 }
 
@@ -48,50 +71,27 @@
 	align-self: center;
 	width: 90px;
 	height: 90px;
+	opacity: clamp(0.15, calc(var(--volume) / 100), 1);
 	fill: var(--accent-color);
 	transition: all 0.2s ease;
-	opacity: clamp(0.15, calc(var(--volume) / 100), 1);
-}
-
-.range {
-	--range-track-top: 50px;
-	--range-track-height: 8px;
-	--range-output-left: calc(var(--volume) * 1%);
-	--range-output-offset-xy: calc(var(--volume) * -1%), 0;
-	position: relative;
-	width: min(150px, 70%);
-	opacity: 0;
-	display: none;
-	transition:
-		opacity 0.7s,
-		max-height 0.7s,
-		padding-block 0.7s,
-		transform 0.7s,
-		overlay 0.7s allow-discrete,
-		display 0.7s allow-discrete;
-
-	@starting-style {
-		opacity: 0;
-		display: none;
-	}
 }
 
 .range-label {
 	display: block;
 	margin-block-end: 45px;
-	text-align: center;
 	font-size: 18px;
+	text-align: center;
 	transition: 300ms;
 }
 
 .track {
 	position: absolute;
+	z-index: -1;
 	top: var(--range-track-top);
 	width: 100%;
 	height: var(--range-track-height);
 	border-radius: 10px;
 	background-color: #ababab;
-	z-index: -1;
 }
 
 .thumbs {
@@ -100,32 +100,32 @@
 
 .progress {
 	position: absolute;
+	z-index: -1;
 	top: var(--range-track-top);
 	width: calc(var(--volume) * 1%);
 	height: var(--range-track-height);
 	border-radius: 10px;
 	background-color: var(--accent-color);
-	z-index: -1;
 }
 
 .range-input {
-	width: 100%;
+	cursor: pointer;
 	position: absolute;
 	top: var(--range-track-top);
+	width: 100%;
 	height: var(--range-track-height);
-	cursor: pointer;
-	-webkit-appearance: none;
-	-moz-appearance: none;
+	appearance: none;
+	appearance: none;
 	appearance: none;
 }
 
 .range-input::-webkit-slider-thumb {
-	appearance: none;
-	-webkit-appearance: none;
 	width: 25px;
 	height: 25px;
 	border: none;
 	border-radius: 50%;
+	appearance: none;
+	appearance: none;
 	background: white;
 	box-shadow: 0 0 0 5px inset var(--accent-color);
 	transition: 300ms;
@@ -142,8 +142,8 @@
 }
 
 .range-input:focus-visible {
-	outline-offset: 15px;
 	outline: 1px solid var(--accent-color);
+	outline-offset: 15px;
 }
 
 .range-input:hover::-webkit-slider-thumb,
@@ -159,6 +159,7 @@
 .range-input:active::-webkit-slider-thumb {
 	box-shadow: 0 0 0 15px inset var(--accent-color);
 }
+
 .range-input:active::-moz-range-thumb {
 	box-shadow: 0 0 0 15px inset var(--accent-color);
 }
@@ -180,12 +181,12 @@
 }
 
 .range-output {
+	user-select: none;
 	position: absolute;
 	bottom: 25px;
 	left: var(--range-output-left);
+	transform: translate(var(--range-output-offset-xy));
 	width: 25px;
 	text-align: center;
-	transform: translate(var(--range-output-offset-xy));
-	user-select: none;
 	transition: 300ms;
 }

@@ -12,7 +12,10 @@ export class SoundCardsPageView extends Page {
 		super(classes['page']);
 		this.viewModel = viewModel;
 
-		const section = new Section(classes.section, classes.container);
+		const section = new Section(classes.section, [
+			'container',
+			classes.container,
+		]);
 
 		const canvasElement = ElementCreator.create({
 			tag: 'canvas',

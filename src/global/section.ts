@@ -3,11 +3,21 @@ import ElementCreator from '../utils/element-creator';
 export default class Section extends ElementCreator {
 	public container: Element;
 
-	constructor(sectionClass: string, containerClass: string) {
-		super({ tag: 'section', classes: [sectionClass] });
+	constructor(
+		sectionClasses: string | string[],
+		containerClasses: string | string[],
+	) {
+		super({
+			tag: 'section',
+			classes: Array.isArray(sectionClasses)
+				? sectionClasses
+				: [sectionClasses],
+		});
 		this.container = ElementCreator.create({
 			tag: 'div',
-			classes: [containerClass],
+			classes: Array.isArray(containerClasses)
+				? containerClasses
+				: [containerClasses],
 		});
 		this.append([this.container]);
 	}

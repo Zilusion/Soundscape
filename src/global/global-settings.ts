@@ -172,14 +172,6 @@ export class GlobalSettings {
 		this.save();
 	}
 
-	// public reset(): void {
-	// 	localStorage.removeItem('appSettings');
-	// 	this._volume.value = DEFAULT_SETTINGS.volume;
-	// 	this._paused.value = true;
-	// 	this._cards.value = { ...DEFAULT_SETTINGS.cards };
-	// 	this.save();
-	// }
-
 	private save(): void {
 		const data: AppSettingsData = {
 			volume: this._volume.value,
